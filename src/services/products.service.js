@@ -127,7 +127,7 @@ async function update(id, input, imageFile) {
   let updatedProduct;
   try {
     updatedProduct = await Product.findOneAndUpdate({ id }, fields, {
-      new: true,
+      returnDocument: 'after',
       runValidators: true,
     });
     if (!updatedProduct) {

@@ -30,7 +30,7 @@ async function updateById(userId, updates) {
 
   try {
     const user = await User.findByIdAndUpdate(userId, allowedUpdates, {
-      new: true,
+      returnDocument: 'after',
       runValidators: true,
     });
     if (!user) {
