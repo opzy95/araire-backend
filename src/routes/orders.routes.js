@@ -8,6 +8,7 @@ const router = express.Router();
 
 router.post('/', requireAuth, uploadPaymentReceipt, ordersController.create);
 router.post('/:orderId/payment', requireAuth, uploadPaymentReceipt, ordersController.submitPayment);
+router.get('/my-orders', requireAuth, ordersController.listForUser);
 router.get('/', requireAuth, requireAdmin, ordersController.listAll);
 router.patch('/:orderId/payment', requireAuth, requireAdmin, ordersController.markPaymentPaid);
 

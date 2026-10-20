@@ -228,4 +228,11 @@ async function listAll() {
     .lean();
 }
 
-module.exports = { createForUser, submitPayment, markPaymentPaid, listAll };
+async function listForUser(userId) {
+  return Order.find({ userId })
+    .select('-paymentReceipt.publicId')
+    .sort({ createdAt: -1 })
+    .lean();
+}
+
+module.exports = { createForUser, submitPayment, markPaymentPaid, listAll, listForUser };

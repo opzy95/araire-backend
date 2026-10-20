@@ -20,4 +20,9 @@ async function listAll(req, res) {
   res.json({ orders });
 }
 
-module.exports = { create, submitPayment, markPaymentPaid, listAll };
+async function listForUser(req, res) {
+  const orders = await ordersService.listForUser(req.user.id);
+  res.json({ orders });
+}
+
+module.exports = { create, submitPayment, markPaymentPaid, listAll, listForUser };
