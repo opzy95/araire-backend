@@ -33,10 +33,27 @@ function uploadImage(file) {
   });
 }
 
+function uploadPaymentReceipt(file) {
+  const client = getCloudinary();
+  return new Promise((resolve, reject) => {
+    const upload = client.uploader.upload_stream(
+      { folder: 'araire/payment-receipts', resource_type: 'image' },
+      (error, result) => {
+        if (error) {
+          reject(error);
+          return;
+        }
+        resolve({ url: result.secure_url, publicId: result.public_id });
+      }
+    );
+    upload.end(file.buffer);
+  });
+}
+
 async function deleteImage(publicId) {
   if (publicId) {
     await getCloudinary().uploader.destroy(publicId, { resource_type: 'image' });
   }
 }
 
-module.exports = { uploadImage, deleteImage };
+module.exports = { uploadImage, uploadPaymentReceipt, deleteImage };
