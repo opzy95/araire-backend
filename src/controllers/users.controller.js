@@ -1,5 +1,10 @@
 const usersService = require('../services/users.service');
 
+async function list(req, res) {
+  const users = await usersService.list();
+  res.json({ users });
+}
+
 async function getMe(req, res) {
   const user = await usersService.getById(req.user.id);
   res.json({ user });
@@ -10,4 +15,4 @@ async function updateMe(req, res) {
   res.json({ user });
 }
 
-module.exports = { getMe, updateMe };
+module.exports = { list, getMe, updateMe };

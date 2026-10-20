@@ -9,6 +9,11 @@ function publicUser(user) {
   };
 }
 
+async function list() {
+  const users = await User.find().sort({ createdAt: -1 });
+  return users.map(publicUser);
+}
+
 async function getById(userId) {
   const user = await User.findById(userId);
   if (!user) {
@@ -49,4 +54,4 @@ async function updateById(userId, updates) {
   }
 }
 
-module.exports = { getById, updateById };
+module.exports = { list, getById, updateById };
