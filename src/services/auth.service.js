@@ -15,10 +15,6 @@ function hashResetCode(code) {
   return crypto.createHmac('sha256', secret).update(code).digest('hex');
 }
 
-function requestAccepted() {
-  return { message: 'If an account exists for that email, reset instructions will be sent.' };
-}
-
 function createToken(userId) {
   const secret = process.env.JWT_SECRET;
   if (!secret) {
@@ -89,10 +85,12 @@ async function requestPasswordReset({ email }) {
 
   const user = await User.findOne({ email: email.trim().toLowerCase() });
   if (!user) {
-    return requestAccepted();
+    const error = new Error('No account is registered with that email address');
+    error.status = 404;
+    throw error;
   }
 
-  const code = crypto.randomInt(0, 100_000_000).toString().padStart(8, '0');
+  const code = crypto.randomInt(0, 1_000_000).toString().padStart(6, '0');
   user.resetPasswordCodeHash = hashResetCode(code);
   user.resetPasswordExpiresAt = new Date(Date.now() + PASSWORD_RESET_TTL_MS);
   await user.save();
@@ -101,9 +99,16 @@ async function requestPasswordReset({ email }) {
     await emailService.sendPasswordResetEmail(user, code);
   } catch (error) {
     console.error('Password reset email could not be sent:', error.message);
+    user.resetPasswordCodeHash = undefined;
+    user.resetPasswordExpiresAt = undefined;
+    await user.save();
+
+    const unavailable = new Error('Unable to send the reset email. Please try again later.');
+    unavailable.status = 503;
+    throw unavailable;
   }
 
-  return requestAccepted();
+  return { message: 'Password reset code sent to your email.' };
 }
 
 async function resetPassword({ email, code, password, confirmPassword }) {
