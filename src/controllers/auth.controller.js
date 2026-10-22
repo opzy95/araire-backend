@@ -10,4 +10,14 @@ async function login(req, res) {
   res.json(result);
 }
 
-module.exports = { register, login };
+async function requestPasswordReset(req, res) {
+  const result = await authService.requestPasswordReset(req.body);
+  res.json(result);
+}
+
+async function resetPassword(req, res) {
+  const result = await authService.resetPassword(req.body);
+  res.json(result);
+}
+
+module.exports = { register, login, requestPasswordReset, resetPassword };
